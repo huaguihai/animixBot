@@ -6,7 +6,7 @@ export function readUsers(filePath) {
         const users = data.split('\n').map(line => line.trim()).filter(line => line.length > 0);
         return users;
     } catch (err) {
-        console.error('Error reading the file:', err);
+        console.error('读取文件时出错:', err);
         return [];
     }
 }
@@ -23,4 +23,3 @@ export function getRandomProxy() {
     const randomProxy = proxies[Math.floor(Math.random() * proxies.length)];
     return randomProxy;
 }
-

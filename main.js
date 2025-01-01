@@ -95,7 +95,7 @@ const getPower = async (headers, proxy) => {
     const name = userInfo?.telegram_username || "Unknown";
     const token = userInfo?.token || 0;
     const power = userInfo?.god_power || 0;
-    log.debug(`Users:`, JSON.stringify({ name, token, power }));
+        log.debug(`用户信息:`, JSON.stringify({ name, token, power }));
 
     return power;
 }
@@ -104,11 +104,11 @@ const mergePetIds = async (headers, proxy) => {
     if (!petIds.allPetIds || petIds.allPetIds.length < 1) {
         return;
     };
-    log.info("Number Available Female Pet:", petIds?.momPetIds?.length || 0);
-    log.info("Number Available Male Pet:", petIds?.dadPetIds?.length || 0);
+    log.info("可用雌性宠物数量:", petIds?.momPetIds?.length || 0);
+    log.info("可用雄性宠物数量:", petIds?.dadPetIds?.length || 0);
 
     if (petIds.momPetIds.length < 1) {
-        log.warn("you don't have any female pets to indehoy 😢💔");
+        log.warn("没有可用的雌性宠物进行配对 😢💔");
         return;
     }
 
@@ -123,7 +123,7 @@ const mergePetIds = async (headers, proxy) => {
         const dad = dads[dadIndex];
 
         if (mom !== undefined && dad !== undefined) {
-            log.info(`Indehoy pets ${mom} and ${dad}💕`);
+            log.info(`正在配对宠物 ${mom} 和 ${dad}💕`);
             await indehoy(headers, proxy, mom, dad);
 
             moms.splice(momIndex, 1);
@@ -133,7 +133,7 @@ const mergePetIds = async (headers, proxy) => {
             const nextMom = moms[momIndex + 1];
 
             if (mom !== nextMom) {
-                log.info(`Indehoy pets ${mom} and ${nextMom}💕`);
+                log.info(`正在配对宠物 ${mom} 和 ${nextMom}💕`);
                 await indehoy(headers, proxy, mom, nextMom);
 
                 moms.splice(momIndex, 1);
@@ -141,7 +141,7 @@ const mergePetIds = async (headers, proxy) => {
                 await delay(1);
             };
         } else {
-            log.warn("you don't have any couple to indehoy 😢💔.");
+            log.warn("没有可配对的宠物 😢💔");
             break;
         }
     }
@@ -153,21 +153,21 @@ const doMissions = async (headers, proxy) => {
     const missionLists = await fetchMissionList(headers, proxy);
     const usedPetIds = getUsedPetIds(missionLists);
     const availablePetIds = getAvailablePetIds(allPetIds, usedPetIds);
-    log.info("Number Available Pets:", availablePetIds.length);
+    log.info("可用宠物数量:", availablePetIds.length);
 
     const firstMatchingMission = checkFirstMatchingMission(missionLists, availablePetIds, usedPetIds, petIdsByStarAndClass);
     if (firstMatchingMission) {
-        log.info("Entering mission with available pets:", JSON.stringify(firstMatchingMission));
+        log.info("使用可用宠物进入任务:", JSON.stringify(firstMatchingMission));
         await joinMission(headers, proxy, firstMatchingMission);
         await doMissions(headers, proxy);
     } else {
-        log.warn("Cannot Join another missions with current available pets.");
+        log.warn("当前可用宠物无法加入更多任务");
     }
 }
 
 const doDailyQuests = async (headers, proxy, dailyQuests) => {
     for (const quest of dailyQuests) {
-        log.info("Doing daily quest:", quest);
+        log.info("正在执行每日任务:", quest);
         await checkIn(headers, proxy, quest);
     }
 }
@@ -180,7 +180,7 @@ const getSeasonPass = async (headers, proxy) => {
         for (const seasonPass of seasonPasss) {
             const { season_id: seasonPassId = 0, current_step: currentStep = 0, title = "Unknown", free_rewards: freePassRewards = [] } = seasonPass;
 
-            log.info(`Checking Season Pass ID: ${seasonPassId}, Current Step: ${currentStep}, Description: ${title}`);
+            log.info(`检查赛季通行证 ID: ${seasonPassId}, 当前进度: ${currentStep}, 描述: ${title}`);
 
             for (const reward of freePassRewards) {
                 const { step, is_claimed: isClaimed, amount, name } = reward;
@@ -189,46 +189,46 @@ const getSeasonPass = async (headers, proxy) => {
                     continue;
                 }
 
-                log.info(`Claiming Reward for Season Pass ID: ${seasonPassId}, Step: ${step}, Reward: ${amount} ${name}`);
+                log.info(`领取赛季通行证 ID: ${seasonPassId} 的奖励, 进度: ${step}, 奖励: ${amount} ${name}`);
                 await claimSeasonPass(headers, proxy, seasonPassId, 'free', step);
             }
         }
     } else {
-        log.warn("Season pass not found.");
+        log.warn("未找到赛季通行证");
     }
 }
 
 const checkUserReward = async (headers, proxy) => {
-    log.info("Checking for available Quests...");
+    log.info("正在检查可用任务...");
     try {
         const questIds = await fetchQuestList(headers, proxy);
         if (questIds.length > 1) {
-            log.info("Found Quest IDs:", questIds);
+            log.info("找到任务 ID:", questIds);
             await joinClan(headers, proxy);
             await doDailyQuests(headers, proxy, questIds);
             await delay(2);
         } else {
-            log.warn("No quests to do.");
+            log.warn("没有可执行的任务");
         }
-        log.info("Checking for completed achievements...");
+        log.info("正在检查已完成的成就...");
         await delay(1);
         const achievements = await fetchAllAchievements(headers, proxy);
         if (achievements.length > 0) {
-            log.info("Found Completed achievements:", achievements.length);
+            log.info("找到已完成的成就:", achievements.length);
             await delay(1);
             for (const achievement of achievements) {
-                log.info("Claiming achievement ID:", achievement);
+                log.info("正在领取成就 ID:", achievement);
                 await claimAchievement(headers, proxy, achievement);
                 await delay(1);
             }
         } else {
-            log.warn("No completed achievements found.");
+            log.warn("未找到已完成的成就");
         }
-        log.info("Checking for available season pass...");
+        log.info("正在检查可用的赛季通行证...");
         await getSeasonPass(headers, proxy);
         await delay(1);
     } catch (error) {
-        log.error("Error checking user rewards:", error);
+        log.error("检查用户奖励时出错:", error);
     }
 };
 
@@ -239,56 +239,56 @@ async function startMission() {
     for (const user of users) {
         const proxy = getRandomProxy();
         console.log(`\n`)
-        log.info(` === Running for user #${userCount} Using Proxy : ${proxy} ===`);
+        log.info(` === 正在为用户 #${userCount} 执行任务，使用代理: ${proxy} ===`);
         const headers = {
             "Content-Type": "application/json",
             "tg-init-data": user,
         };
 
-        log.info("Fetching Gatcha Bonus...");
+        log.info("正在获取扭蛋奖励...");
         const gatchaBonus = await fetchGatchaBonus(headers, proxy);
         const { current_step, is_claimed_god_power, is_claimed_dna, step_bonus_god_power, step_bonus_dna } = gatchaBonus;
         if (current_step >= step_bonus_god_power && !is_claimed_god_power) {
-            log.info("Claiming God Power Bonus...");
+            log.info("正在领取神力奖励...");
             await claimGatchaBonus(headers, proxy, 1);
         } else if (current_step >= step_bonus_dna && !is_claimed_dna) {
-            log.info("Claiming DNA Bonus...");
+            log.info("正在领取DNA奖励...");
             await claimGatchaBonus(headers, proxy, 2);
         } else {
-            log.warn("No bonus from gatcha to claim.");
+            log.warn("没有可领取的扭蛋奖励");
         };
 
         let power = await getPower(headers, proxy);
         while (power >= 1) {
-            log.info("Power is enough to gatcha new pet. lets go!");
+            log.info("神力足够抽取新宠物，开始吧！");
             power = await getNewPet(headers, proxy);
             await delay(1);
         };
 
-        log.info("Fetching pet mom and dad can indehoy!❤️");
+        log.info("正在寻找可以配对的宠物父母！❤️");
         await mergePetIds(headers, proxy);
         await delay(1);
         try {
             const missionLists = await fetchMissionList(headers, proxy);
 
-            log.info("Checking for completed missions...");
+            log.info("正在检查已完成的任务...");
             await delay(1);
             const missionIds = missionLists.filter(mission => mission.can_completed).map(mission => mission.mission_id);
             if (missionIds.length > 0) {
                 for (const missionId of missionIds) {
-                    log.info("Claiming mission with ID:", missionId);
+                    log.info("正在领取任务 ID:", missionId);
                     await claimMission(headers, proxy, missionId);
                     await delay(1);
                 }
             } else {
-                log.warn("No completed missions found.");
+                log.warn("未找到已完成的任务");
             };
-            log.info("Checking for available missions to enter...");
+            log.info("正在检查可进入的任务...");
             await doMissions(headers, proxy)
             await delay(1);
             await checkUserReward(headers, proxy);
         } catch (error) {
-            log.error("Error fetching Missions data:", error);
+            log.error("获取任务数据时出错:", error);
         }
         userCount++;
     }
@@ -299,7 +299,7 @@ async function main() {
     await delay(1);
     while (true) {
         await startMission();
-        log.warn("Waiting for 30 minutes before continue...");
+        log.warn("等待30分钟后继续...");
         await delay(30 * 60);
     }
 }

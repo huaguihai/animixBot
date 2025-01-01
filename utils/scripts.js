@@ -29,10 +29,10 @@ async function requestWithRetry(endpoint, options, retries = 3, proxy = null) {
     } catch (error) {
         clearTimeout(timeoutId);
         if (retries > 0) {
-            log.warn(`Retrying request to ${url}. Attempts left: ${retries}`);
+            log.warn(`重试请求 ${url}。剩余尝试次数: ${retries}`);
             return await requestWithRetry(endpoint, options, retries - 1);
         }
-        log.error(`Request to ${url} failed after 3 retries:`, error);
+            log.error(`请求 ${url} 在3次重试后失败:`, error);
         return null;
     }
 };
@@ -136,7 +136,7 @@ export async function claimGatchaBonus(headers, proxy, reward_no) {
         body: JSON.stringify(payload),
     }, 3, proxy);
     if (data?.result) {
-        log.info("Gatcha Bonus claimed successfully:", data.result);
+        log.info("成功领取扭蛋奖励:", data.result);
     }
 }
 // Claim season pass
@@ -148,7 +148,7 @@ export async function claimSeasonPass(headers, proxy, seasonId, type, step) {
         body: JSON.stringify(payload),
     }, 3, proxy);
     if (data?.result) {
-        log.info("Season Pass claimed successfully:", data.result);
+        log.info("成功领取赛季通行证奖励:", data.result);
     }
 }
 
@@ -161,7 +161,7 @@ export async function claimMission(headers, proxy, missionId) {
         body: JSON.stringify(payload),
     }, 3, proxy);
     if (data?.result) {
-        log.info("Mission claimed successfully:", data.result);
+        log.info("成功领取任务奖励:", data.result);
     }
 }
 
@@ -175,7 +175,7 @@ export async function indehoy(headers, proxy, mom, dad) {
     }, 3, proxy);
     const pet = data?.result?.pet || { name: "Unknown", star: 0, class: "Unknown" };
     const petInfo = { name: pet.name, star: pet.star, class: pet.class };
-    log.info(`Indehoy ah ah successfully!😘 Born:`, JSON.stringify(petInfo));
+    log.info(`成功配对宠物!😘 新宠物:`, JSON.stringify(petInfo));
 }
 
 // Join mission
@@ -186,7 +186,7 @@ export async function joinMission(headers, proxy, payloadMission) {
         body: JSON.stringify(payloadMission),
     }, 3, proxy);
     if (data?.result?.createdAt) {
-        log.info("Joined mission successfully at:", data.result.createdAt);
+        log.info("成功加入任务，时间:", data.result.createdAt);
     }
 }
 
@@ -198,7 +198,7 @@ export async function joinClan(headers, proxy) {
         body: JSON.stringify({ clan_id: 97 }),
     }, 3, proxy);
     if (data?.result) {
-        log.info("Joined clan successfully:", data.result);
+        log.info("成功加入公会:", data.result);
     }
 }
 
@@ -210,7 +210,7 @@ export async function checkIn(headers, proxy, questCode) {
         body: JSON.stringify({ quest_code: questCode }),
     }, 3, proxy);
     if (data?.result?.status) {
-        log.info(`Quest ${questCode} claimed successfully:`, data.result.status);
+        log.info(`成功领取任务 ${questCode} 奖励:`, data.result.status);
     }
 }
 
@@ -222,7 +222,7 @@ export async function claimAchievement(headers, proxy, questId) {
         body: JSON.stringify({ quest_id: questId }),
     }, 3, proxy);
     if (data?.result?.status) {
-        log.info(`Achievement ${questId} claimed successfully:`, data.result.status);
+        log.info(`成功领取成就 ${questId} 奖励:`, data.result.status);
     }
 }
 
@@ -236,7 +236,6 @@ export async function getNewPet(headers, proxy) {
     const pet = data?.result?.dna[0] || { name: "Unknown", star: 0, class: "Unknown" };
     const petInfo = { name: pet.name, star: pet.star, class: pet.class };
     const godPower = data?.result?.god_power || 0;
-    log.info("Gacha New Pet Success!", JSON.stringify(petInfo));
+    log.info("成功抽取新宠物!", JSON.stringify(petInfo));
     return godPower;
 }
-
