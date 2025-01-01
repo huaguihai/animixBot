@@ -17,7 +17,7 @@
 
 - 已安装Node.js
 - `users.txt`文件包含用户数据，获取方法如下：
-- 打开Animix Telegram小程序 [https://t.me/animix_game_bot](https://t.me/animix_game_bot?startapp=A2veN3aAUJqc)
+- 打开Animix Telegram小程序 [https://t.me/animix_game_bot](https://t.me/animix_game_bot?startapp=11BHXR8ns7im)
 - 按F12打开开发者工具
 - 在Session Storage中找到`tgWebAppData`并复制所有值。`user=....`
 ![usersData](img/image-1.png)
